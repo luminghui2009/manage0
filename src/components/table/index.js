@@ -1,17 +1,20 @@
 import React from 'react';
 import { Table as AntTable,Tooltip,Modal, Button ,message} from 'antd';
 import './index.less';
+import ModalForm from "../modalForm/index";
 const confirm = Modal.confirm;
 message.config({
     top: 120,
     duration: 2,
 });
 export default class Table extends React.Component {
+
     constructor(props){
         super(props);
         this.state={
             data:this.props.data,
-            currentPage:1
+            currentPage:1,
+            visible:false
         }
     };
     tableHeader = () => {
@@ -62,7 +65,10 @@ export default class Table extends React.Component {
     handleEdit=(e)=>{
         let data_index=e.target.getAttribute("data-index");
         let index=parseInt(this.state.currentPage-1)*10+parseInt(data_index);
-
+        console.log(123);
+        this.setState({
+            visible:true
+        });
     };
     handleDelete=(e)=>{
         let data_index=e.target.getAttribute("data-index");
@@ -107,6 +113,7 @@ export default class Table extends React.Component {
                     columns={this.tableHeader()}
                     pagination={{onChange:this.onChangeHandle,pageSize:10}}
                 />
+                <ModalForm visible={this.state.visible}/>
             </div>
         )
     }
