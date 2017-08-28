@@ -66,7 +66,7 @@ export default class Music extends React.Component {
 
     /*获取表格数据*/
     fetchTableData = (typeId, searchFields) => {
-        fetchJsonp(`http://tingapi.ting.baidu.com/v1/restserver/ting?xml&calback=&from=webapp_music&method=baidu.ting.billboard.billList&type=${typeId}&size=100&offset=0`, {method: 'GET'}).then(res => res.json()).then(data => {
+        fetchJsonp(`http://tingapi.ting.baidu.com/v1/restserver/ting?xml&calback=&from=webapp_music&method=baidu.ting.billboard.billList&type=${typeId}&size=200&offset=0`, {method: 'GET'}).then(res => res.json()).then(data => {
             let songList = data.song_list;
             let songArray=[];
             if (searchFields && searchFields.country && searchFields.country !== '0') {
@@ -93,45 +93,7 @@ export default class Music extends React.Component {
         }).catch(e => console.log(e.message));
     };
     /*设置表头*/
-    tableHeader = () => {
-        return [
-            {title: '序号',
-                dataIndex: 'rowIndex',
-                width: 100
-            },
-            {title: '歌曲名',
-                dataIndex: 'title',
-                width: 200
-            },
-            {title: '歌手',
-                dataIndex: 'author',
-                width: 200
-            },
-            {title: '发行国家',
-                dataIndex: 'country',
-                width: 200
-            },
-            {title: '语种',
-                dataIndex: 'language',
-                width: 200
-            },
-            {title: '发行时间',
-                dataIndex: 'publishtime',
-                width: 200
-            },
-            {title: '操作',
-                dataIndex: 'action',
-                width: 200,
-                render: (text, record) => (
-                    <span>
-                        <a href="#">修改</a>
-                        <span className="ant-divider"/>
-                        <a href="#">删除</a>
-                    </span>)
-            }
-        ]
 
-    };
 
     /*组件加载完成后首先获取默认的歌曲列表*/
     componentDidMount() {
@@ -144,8 +106,7 @@ export default class Music extends React.Component {
                 <SearchBar fields={this.searchFields()} onSubmit={this.onSearch}/>
                 <div className="tableBox">
                     <Table data={this.state.tData}
-                           header={this.tableHeader()}
-
+                         style={{marginLeft:20}}
                     />
                 </div>
             </div>
