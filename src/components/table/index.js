@@ -14,7 +14,8 @@ export default class Table extends React.Component {
         this.state={
             data:this.props.data,
             currentPage:1,
-            visible:false
+            visible:false,
+            editItem:{}
         }
     };
     tableHeader = () => {
@@ -49,39 +50,44 @@ export default class Table extends React.Component {
                 render: (text, record,index) => (
                     <span>
                         <Tooltip title="修改">
-                            <a href="javascript:void(0)" data-index={index} onClick={this.handleEdit}>修改</a>
+                            <a data-index={index} onClick={this.handleEdit}>修改</a>
                         </Tooltip>
-
                         <span className="ant-divider"/>
                         <Tooltip title="删除">
-                             <a href="javascript:void(0)" onClick={this.handleDelete} >删除</a>
+                             <a href="javascript:void(0)" data-index={index} onClick={this.handleDelete} >删除</a>
                         </Tooltip>
-
                     </span>)
             }
         ]
 
     };
     handleEdit=(e)=>{
+        e.preventDefault();
         let data_index=e.target.getAttribute("data-index");
         let index=parseInt(this.state.currentPage-1)*10+parseInt(data_index);
-        console.log(123);
-        this.setState({
-            visible:true
+        let item=this.state.data[index];
+        this.setState(...this.state,{
+            visible:true,
+            editItem:item
         });
     };
     handleDelete=(e)=>{
         let data_index=e.target.getAttribute("data-index");
         let delIndex=parseInt(this.state.currentPage-1)*10+parseInt(data_index);
+        console.log(delIndex);
         let data=this.state.data;
         let showConfirm=() =>{
             confirm({
                 title: '提示',
                 content: '确定要删除吗？',
                 onOk:()=> {
-                    data.splice(delIndex,1);
-                    this.setState({
-                        data:data
+                    data=data.filter((item,index)=>{
+                        return index!= delIndex;
+                    });
+                    console.log(data);
+                    this.setState(...this.state,{
+                        data:data,
+                        visible:false
                     });
                     message.success("删除成功")
                 },
@@ -94,16 +100,18 @@ export default class Table extends React.Component {
     };
     componentWillReceiveProps(nextProps){
         if(this.props!=nextProps){
-            this.setState({
+            this.setState(...this.state,{
                 data:nextProps.data
             })
         }
     }
     onChangeHandle=(page,pagesize)=>{
-      this.setState({
-          currentPage:page
+      this.setState(...this.state,{
+          currentPage:page,
+          visible:false
       });
     };
+
     render() {
         let newData=this.state.data.map((item, index) => ({...item, rowIndex: index + 1, key: index + 1}));
         return (
@@ -113,7 +121,7 @@ export default class Table extends React.Component {
                     columns={this.tableHeader()}
                     pagination={{onChange:this.onChangeHandle,pageSize:10}}
                 />
-                <ModalForm visible={this.state.visible}/>
+                <ModalForm visible={this.state.visible} editItem={this.state.editItem}/>
             </div>
         )
     }
